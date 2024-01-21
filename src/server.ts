@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import customerRouter from './routes/customer.routes';
+import tagRouter from './routes/tag.routes';
 // import swaggerUi from 'swagger-ui-express';
 // import swaggerDocs from './swagger.json';
 
@@ -25,6 +26,7 @@ app.use(cors());
 
 // Routes
 app.use('/api', customerRouter);
+app.use('/api', tagRouter);
 
 app.get('/', (req, res) => {
     res.send('Hello guys!');

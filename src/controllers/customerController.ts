@@ -14,7 +14,7 @@ export class CustomerController {
 
     async createCustomer(req: Request, res: Response): Promise<void> {
         try {
-            const { name, email } = req.body;
+            const { name, email, tags } = req.body;
 
             const customerExist = await checkCustomerExist( name, email );
             if (customerExist) {
@@ -22,7 +22,7 @@ export class CustomerController {
                 return;
             } 
 
-            const customertData = { name, email };
+            const customertData = { name, email, tags };
             const customer = await this.customerModel.createCustomer(customertData);
             res.status(201).json(customer);
         } catch (error) {
@@ -32,20 +32,20 @@ export class CustomerController {
 
     async updateCustomer(req: Request, res: Response): Promise<void> {
         try {
-            const { name, email } = req.body;
+            const { name, email, tags } = req.body;
             const customerId = req.params.id;
 
             const customerExist = await this.customerModel.listCustomer(customerId);
             if (!customerExist) {
-                res.status(405).json( "O cliente não foi encontrado." );
+                res.status(404).json( "O cliente não foi encontrado." );
                 return;
             } 
 
-            const customertData = { name, email };
+            const customertData = { name, email, tags };
             const customer = await this.customerModel.updateCustomer(customertData, customerId);
-            res.status(201).json(customer);
+            res.status(200).json(customer);
         } catch (error) {
-            res.status(500).json({ error: `Erro ao criar: ${error}` });
+            res.status(500).json({ error: `Erro ao atualizar: ${error}` });
         }
     }
 

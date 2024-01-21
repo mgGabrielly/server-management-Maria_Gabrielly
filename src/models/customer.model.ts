@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 interface CustomerData {
     name:   string;
     email:  string;
+    tags?: string[];
 }
 
 export class Customer {
@@ -16,7 +17,10 @@ export class Customer {
         try {
             const customer = await this.prisma.customer.create({
                 data: {
-                ...customerData,
+                    ...customerData,
+                    Tags: {
+                        create: customerData.tags?.map((tag) => ({ name: tag })) || [],
+                    },
                 },
             });
             return customer;
@@ -30,6 +34,9 @@ export class Customer {
             const customer = await this.prisma.customer.update({
                 data: {
                     ...customerData,
+                    Tags: {
+                        create: customerData.tags?.map((tag) => ({ name: tag })) || [],
+                    },
                 },
                 where: {
                     id: customerId,
@@ -43,7 +50,11 @@ export class Customer {
 
     async listAllCustomers(): Promise<any[]> {
         try {
-            const customers = await this.prisma.customer.findMany();
+            const customers = await this.prisma.customer.findMany({
+                include: {
+                    Tags: true, 
+                },
+            });
             return customers;
         } catch (error) {
             throw new Error(`Erro ao listar: ${error}`);
@@ -55,7 +66,10 @@ export class Customer {
             const customer = await this.prisma.customer.findUnique({
                 where: {
                     id: customerId,
-                }
+                },
+                include: {
+                    Tags: true, 
+                },
             });
             return customer ? [customer] : [];
         } catch (error) {
